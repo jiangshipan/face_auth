@@ -1,0 +1,52 @@
+# coding= utf-8
+from api.user import user
+from api.face import face
+from client.redis_client import redis_client
+from config.db import app
+from flask import request
+
+from config.log import logger
+from util.resp_util import ResponseUtil
+
+
+app.register_blueprint(user, url_prefix='/user')
+app.register_blueprint(face, url_prefix='/face')
+
+# 不进行校验的方法
+ALLOW_METHOD = ['/user/login', '/user/reg', '/', '/user/code', '/face/add', '/face/search']
+
+
+@app.before_request
+def check_token():
+    """
+    校验身份
+    :return:
+    """
+    method = str(request.url_rule)
+    if not method or method not in ALLOW_METHOD:
+        login_token = request.cookies.get('login_token')
+        if not login_token:
+            return ResponseUtil.error_response(msg='no access')
+        user_id = login_token.split('-')[0]
+        real_token = redis_client.get(user_id)
+        if login_token != real_token:
+            return ResponseUtil.error_response(msg='no access')
+    return
+
+
+@app.route("/")
+def hello():
+    logger.error('hello')
+    return ResponseUtil.error_response()
+
+
+if __name__ == '__main__':
+    import logging
+    # 配置日志
+    handler = logging.FileHandler('log/face_auth.log', encoding='UTF-8')
+    logging_format = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+    handler.setFormatter(logging_format)
+    app.logger.addHandler(handler)
+    # 开启服务
+    app.run(debug=False)
