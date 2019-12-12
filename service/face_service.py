@@ -6,27 +6,26 @@ from config.db import db
 from config.config import FACE_LIB_USER_ADD, FACE_SEARCH, FACE_ACCESS
 from util.face_auth_utils import FaceAuthUtils
 from util.req_util import RequestUtil
-from config.log import logger
-
 
 class FaceService(object):
     """
     人脸服务
     """
 
-    def face_add(self, face_info, file_base64, face_url):
+    def face_add(self, face_info, file_base64, filename):
         """
         添加人脸到人脸库
         :return:
         """
         user_id = face_info.get('user_id')
         face_name = face_info.get('face_name')
-        face_url = 'http://www.wvue.com.cn/jsp_download/11566976362_.pic.jpg'
         face = FaceDao.get_by_user_id_and_face_name(user_id, face_name)
         if face:
             raise Exception('face is exist')
-        face = Face.create(user_id, face_name, face_url)
         try:
+            # 上传图片
+            face_url = FaceAuthUtils.base642imag(file_base64, filename)
+            face = Face.create(user_id, face_name, face_url)
             FaceDao.insert(face)
             params = {'image': file_base64, 'image_type': 'BASE64', 'group_id': user_id, 'user_id': face.id
                 , 'quality_control': 'NORMAL'}
@@ -37,17 +36,15 @@ class FaceService(object):
             self.check_response(resp)
             db.session.commit()
         except Exception as e:
-            logger.error(e.message)
             db.session.rollback()
             raise Exception(e.message)
 
-    def face_search(self, face_info, file_base64):
+    def face_search(self, user_id, file_base64):
         """
         指定用户组中搜索人像
         :param face_info:
         :return:
         """
-        user_id = face_info.get('user_id')
         try:
             params = {'image': file_base64, 'image_type': 'BASE64', 'group_id_list': str(user_id),
                       'quality_control': 'NORMAL',
@@ -63,7 +60,6 @@ class FaceService(object):
                     return
             raise Exception('人脸验证未通过')
         except Exception as e:
-            logger.error(e.message)
             raise Exception(e.message)
 
     def get_face_by_user_ids(self, info):

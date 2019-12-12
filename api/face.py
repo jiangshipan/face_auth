@@ -1,18 +1,15 @@
 # coding= utf-8
 
 import base64
-import copy
-import os
 
-from flask import Blueprint, request
+from flask import Blueprint, request, redirect
 
 from service.face_service import FaceService
 from util.form.face_form import FaceRegister, FaceSearch, UserSearchFace
 from util.form.form import validate_form
 from util.resp_util import ResponseUtil
-from config.log import logger
 from config.limiter import limiter
-from config.config import PAGE_LIMIT, FILE_EXT, FILE_PATH
+from config.config import PAGE_LIMIT, FILE_EXT, FACE_FRONT
 
 face = Blueprint('face', __name__)
 
@@ -28,7 +25,6 @@ def face_register():
     {
         "uer_id": "",
         "face_name": "",
-        "face_url": ""
     }
     :return:
     {"msg": "success", "code": 0, "data": null}
@@ -36,10 +32,9 @@ def face_register():
     form = FaceRegister(request.form)
     try:
         validate_form(form)
-        file_base64, face_url = upload_file2base64(request.files)
-        face_service.face_add(form.data, file_base64, face_url)
+        file_base64, filename = upload_file2base64(request.files)
+        face_service.face_add(form.data, file_base64, filename)
     except Exception as e:
-        logger.error(e.message)
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
 
@@ -52,23 +47,24 @@ def face_search():
     @:param
     {
         "user_id": 10,
-        "face_url": "www.baidu.com"
     }
     :return:
     {"msg": "success", "code": 0, "data": null}
     """
     form = FaceSearch(request.form)
     try:
-        validate_form(form)
-        file_base64, _ = upload_file2base64(request.files)
-        face_service.face_search(form.data, file_base64)
+        # validate_form(form)
+        str = request.json
+        # file_base64, _ = upload_file2base64(request.files)
+        uid = str.get('uid')
+        file_base64 = str.get('base64_code')
+        face_service.face_search(uid, file_base64)
     except Exception as e:
-        logger.error(e.message)
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
 
 
-@limiter.limit("2 per second")
+@limiter.limit("10 per second")
 @face.route("/get")
 def get_all_by_one():
     """
@@ -88,9 +84,15 @@ def get_all_by_one():
             raise Exception('最大查询10个id')
         res = face_service.get_face_by_user_ids(form.data)
     except Exception as e:
-        logger.error(e.message)
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')
+
+@limiter.limit("10 per second")
+@face.route("/redirect/check")
+def redirect_check():
+    uid = request.cookies.get('login_token').split('-')[0]
+    return redirect(FACE_FRONT + '#/check/%s' % uid)
+
 
 
 def upload_file2base64(files):
@@ -100,11 +102,6 @@ def upload_file2base64(files):
     if file.filename == '':
         raise Exception('图片名称不能为空')
     if file.filename.split('.')[-1] not in FILE_EXT:
-        raise Exception('不支持该文件上传')
-    # 上传文件
-    # f = copy.deepcopy(file)
+        raise Exception('仅支持jpg,jpeg,png类型的文件')
     file_base64 = base64.b64encode(file.read())
-    # print os.path.join(FILE_PATH, f.filename)
-    # f.save(os.path.join(FILE_PATH, 'xxx' + f.filename))
-    # face_url = 'http://www.baidu.com'
-    return file_base64, ''
+    return file_base64, file.filename

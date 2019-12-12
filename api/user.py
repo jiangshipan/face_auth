@@ -1,5 +1,5 @@
 # coding= utf-8
-from flask import Blueprint, request
+from flask import Blueprint, request, make_response
 
 from service.mail_service import MailService
 from service.user_service import UserService
@@ -8,7 +8,6 @@ from util.resp_util import ResponseUtil
 from util.form.user_form import UserRegister
 from util.form.form import validate_form
 from config.limiter import limiter
-from config.log import logger
 
 user = Blueprint('user', __name__)
 
@@ -16,7 +15,7 @@ user_service = UserService()
 email_service = MailService()
 
 
-@limiter.limit("2 per second")
+@limiter.limit("10 per second")
 @user.route("/login")
 def login():
     """
@@ -29,13 +28,14 @@ def login():
     password = request.args.get('password')
     try:
         msg = user_service.user_login(username, password)
+        resp = make_response('{"msg": "success", "code": 0, "data": null}')
+        resp.set_cookie("login_token", msg, max_age=1 * 60 * 24)
     except Exception as e:
-        logger.error(e.message)
         return ResponseUtil.error_response(msg=e.message)
-    return ResponseUtil.success_response(msg=msg)
+    return resp
 
 
-@limiter.limit("2 per second")
+@limiter.limit("10 per second")
 @user.route("/reg", methods=['POST'])
 def register():
     """
@@ -50,12 +50,11 @@ def register():
         validate_form(form)
         user_service.user_register(form.data)
     except Exception as e:
-        logger.error(e.message)
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
 
 
-@limiter.limit("1 per second")
+@limiter.limit("10 per second")
 @user.route("/code", methods=['POST'])
 def register_code():
     """
@@ -69,7 +68,6 @@ def register_code():
         validate_form(form)
         email_service.send_register_code(form.data.get('email'))
     except Exception as e:
-        logger.error(e.message)
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
 

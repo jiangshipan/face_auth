@@ -5,7 +5,6 @@ from client.redis_client import redis_client
 from config.db import app
 from flask import request
 
-from config.log import logger
 from util.resp_util import ResponseUtil
 
 
@@ -33,20 +32,31 @@ def check_token():
             return ResponseUtil.error_response(msg='no access')
     return
 
+@app.after_request
+def cors(environ):
+    """
+    解决跨域
+    :param environ:
+    :return:
+    """
+    environ.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin')
+    environ.headers['Access-Control-Allow-Method'] = '*'
+    environ.headers['Access-Control-Allow-Headers'] = 'x-requested-with, content-type'
+    environ.headers['Access-Control-Allow-Credentials'] = 'true'
+    return environ
 
 @app.route("/")
 def hello():
-    logger.error('hello')
     return ResponseUtil.error_response()
 
 
 if __name__ == '__main__':
     import logging
     # 配置日志
-    handler = logging.FileHandler('log/face_auth.log', encoding='UTF-8')
-    logging_format = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-    handler.setFormatter(logging_format)
-    app.logger.addHandler(handler)
+    # handler = logging.FileHandler('log/face_auth.log', encoding='UTF-8')
+    # logging_format = logging.Formatter(
+    #     '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+    # handler.setFormatter(logging_format)
+    # app.logger.addHandler(handler)
     # 开启服务
     app.run(debug=False)

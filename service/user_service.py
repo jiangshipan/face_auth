@@ -8,7 +8,6 @@ from model.email import Email
 from model.user import User
 from config.db import db
 from client.redis_client import redis_client
-from config.log import logger
 
 
 class UserService(object):
@@ -60,7 +59,6 @@ class UserService(object):
             EmailDao.insert(email)
             db.session.commit()
         except Exception as e:
-            logger.error(e.message)
             db.session.rollback()
             raise Exception(e.message)
 

@@ -1,10 +1,10 @@
 # coding= utf-8
 
 # redis配置
-REDIS_HOST = '10.224.24.215'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = '6379'
 # mysql配置
-DATABASE_URI = 'mysql+pymysql://root:qqq110@10.224.24.215:3306/face_auth?charset=utf8mb4'
+DATABASE_URI = 'mysql+pymysql://root:qqq110@127.0.0.1:3306/face_auth?charset=utf8mb4'
 
 # 邮件配置
 MAIL_SERVER = 'smtp.qq.com'
@@ -17,7 +17,9 @@ MAIL_PASSWORD = 'ektzydckmmjfjgjc'
 PAGE_LIMIT = 10
 # 允许上传的文件类型
 FILE_EXT = ['png', 'jpeg', 'jpg', 'JPG', 'PNG', 'JPEG']
-FILE_PATH = '/Users/jiangshipan/Desktop/'
+FILE_PATH = '/Users/jiangshipan/Desktop/upload_img/'
+# 随机文件夹
+FILE_DIR = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9']
 
 # 获取access_token
 BAIDU_TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'
@@ -42,3 +44,6 @@ FACE_SEARCH = 'https://aip.baidubce.com/rest/2.0/face/v3/search'
 
 # 人脸相似评分
 FACE_ACCESS = 80
+
+#人脸检测/录入 url
+FACE_FRONT = 'http://localhost:8080/'

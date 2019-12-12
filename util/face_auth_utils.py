@@ -1,9 +1,10 @@
 # coding= utf-8
 import random
 import base64
-import requests
+import uuid
+import os
 
-from config.config import FILE_PATH
+from config.config import FILE_PATH, FILE_DIR
 
 
 class FaceAuthUtils(object):
@@ -24,17 +25,25 @@ class FaceAuthUtils(object):
         return ''.join(code)
 
     @staticmethod
-    def image2base64(image_url):
+    def base642imag(file_base64, filename):
         """
-        图片base64编码
-        :param image_url:
+        根据base64码上传图片
+        :param file_base64: 图片的base64编码
         :return:
         """
-        with open(image_url, 'rb') as f:
-            base64_data = base64.b64encode(f.read())
-            return base64_data
+        # 随机生成文件名
+        filename = ''.join(str(uuid.uuid4()).split('-')) + filename
+        file_dir = FILE_PATH + random.choice(FILE_DIR)
+        file_url = file_dir + '/' + filename
+        try:
+            if not os.path.exists(file_dir):
+                os.makedirs(file_dir)
+            with open(file_url, 'wb') as f:
+                f.write(base64.b64decode(file_base64))
+        except Exception as e:
+            raise Exception('文件上传失败, 原因:' % e.message)
+        return file_url
 
 
 if __name__ == '__main__':
-    face_url = '/Users/jiangshipan/Desktop/IMG_0040.JPG'
-    FaceAuthUtils.image2base64(face_url)
+    pass
