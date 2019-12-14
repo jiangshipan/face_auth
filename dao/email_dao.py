@@ -10,9 +10,9 @@ class EmailDao(object):
         db.session.add(email)
         db.session.flush([email])
 
-    @staticmethod
-    def update(email):
-        db.session.flush([email])
+    # @staticmethod
+    # def update(email):
+    #     db.session.flush([email])
 
 
     @staticmethod

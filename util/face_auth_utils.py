@@ -25,14 +25,14 @@ class FaceAuthUtils(object):
         return ''.join(code)
 
     @staticmethod
-    def base642imag(file_base64, filename):
+    def base642imag(file_base64):
         """
         根据base64码上传图片
         :param file_base64: 图片的base64编码
         :return:
         """
         # 随机生成文件名
-        filename = ''.join(str(uuid.uuid4()).split('-')) + filename
+        filename = ''.join(str(uuid.uuid4()).split('-'))
         file_dir = FILE_PATH + random.choice(FILE_DIR)
         file_url = file_dir + '/' + filename
         try:

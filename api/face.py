@@ -29,11 +29,10 @@ def face_register():
     :return:
     {"msg": "success", "code": 0, "data": null}
     """
-    form = FaceRegister(request.form)
+    form = FaceRegister.from_json(formdata=request.json, meta={'locales': ['zh_CN', 'zh']})
     try:
         validate_form(form)
-        file_base64, filename = upload_file2base64(request.files)
-        face_service.face_add(form.data, file_base64, filename)
+        face_service.face_add(form.data)
     except Exception as e:
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
@@ -51,14 +50,10 @@ def face_search():
     :return:
     {"msg": "success", "code": 0, "data": null}
     """
-    form = FaceSearch(request.form)
+    form = FaceSearch.from_json(formdata=request.json, meta={'locales': ['zh_CN', 'zh']})
     try:
-        # validate_form(form)
-        str = request.json
-        # file_base64, _ = upload_file2base64(request.files)
-        uid = str.get('uid')
-        file_base64 = str.get('base64_code')
-        face_service.face_search(uid, file_base64)
+        validate_form(form)
+        face_service.face_search(form.data)
     except Exception as e:
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
@@ -68,21 +63,19 @@ def face_search():
 @face.route("/get")
 def get_all_by_one():
     """
-    获取某些组(user_ids)下的所有face
+    获取某个用户(教师)下的学生列表
     @:param
-    {
-        "user_ids": [10, 15],
-        "page": 1
-    }
+    user_id, page
     :return:
     """
-    form = UserSearchFace.from_json(formdata=request.json, meta={'locales': ['zh_CN', 'zh']})
     try:
-        validate_form(form)
-        user_ids = form.data.get('user_ids')
-        if len(user_ids) > PAGE_LIMIT:
-            raise Exception('最大查询10个id')
-        res = face_service.get_face_by_user_ids(form.data)
+        user_id = request.args.get('user_id')
+        page = request.args.get('page')
+        if not user_id:
+            raise Exception("please input user_id")
+        if not page:
+            page = 1
+        res = face_service.get_face_by_user_id(user_id, page)
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')

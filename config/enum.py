@@ -11,7 +11,9 @@ class UserStatus(object):
 
 class FaceStatus(object):
     """
-    人脸状态
+    人脸签到状态
     """
-    NORMAL = 0
-    FORBID = 1
+    CHECKED = 0 # 已签到
+    NOCHECK = 1 # 未签到
+    FORBID = 2 # 删除
+
