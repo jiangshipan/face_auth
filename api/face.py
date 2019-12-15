@@ -5,7 +5,7 @@ import base64
 from flask import Blueprint, request, redirect
 
 from service.face_service import FaceService
-from util.form.face_form import FaceRegister, FaceSearch, UserSearchFace
+from util.form.face_form import FaceRegister, FaceSearch
 from util.form.form import validate_form
 from util.resp_util import ResponseUtil
 from config.limiter import limiter
@@ -42,7 +42,7 @@ def face_register():
 @face.route("/search", methods=['POST'])
 def face_search():
     """
-    在指定组中搜索人脸
+    在指定组中搜索人脸（签到）
     @:param
     {
         "user_id": 10,
@@ -73,8 +73,6 @@ def get_all_by_one():
         page = request.args.get('page')
         if not user_id:
             raise Exception("please input user_id")
-        if not page:
-            page = 1
         res = face_service.get_face_by_user_id(user_id, page)
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)
@@ -86,6 +84,11 @@ def redirect_check():
     uid = request.cookies.get('login_token').split('-')[0]
     return redirect(FACE_FRONT + '#/check/%s' % uid)
 
+@limiter.limit("10 per second")
+@face.route("/redirect/input")
+def redirect_input():
+    uid = request.cookies.get('login_token').split('-')[0]
+    return redirect(FACE_FRONT + '#/input/%s' % uid)
 
 
 def upload_file2base64(files):

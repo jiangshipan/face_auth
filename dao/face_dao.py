@@ -24,3 +24,7 @@ class FaceDao(object):
     @staticmethod
     def get_face_by_user_id(user_ids, page):
         return Face.query.filter(Face.user_id.in_(user_ids), Face.status != FaceStatus.FORBID).limit(PAGE_LIMIT).offset(page - 1).first()
+
+    @staticmethod
+    def get_face_by_face_id(face_id):
+        return Face.query.filter(Face.id == face_id, Face.status != FaceStatus.FORBID).first()

@@ -1,5 +1,7 @@
 # coding= utf-8
 import json
+
+from config.enum import FaceStatus
 from dao.face_dao import FaceDao
 from model.face import Face
 from config.db import db
@@ -18,9 +20,9 @@ class FaceService(object):
         :return:
         """
         user_id = face_info.get('user_id')
-        face_name = face_info.data.get('face_name')
-        face_class = face_info.data.get('face_class')
-        base64_code = face_info.data.get('base64_code')
+        face_name = face_info.get('face_name')
+        face_class = face_info.get('face_class')
+        base64_code = face_info.get('base64_code')
         face = FaceDao.get_by_user_id_and_face_name(user_id, face_name)
         if face:
             raise Exception('face is exist')
@@ -44,6 +46,8 @@ class FaceService(object):
     def face_search(self, face_info):
         """
         指定用户组中搜索人像
+        user_id = 教师id = group_id
+        百度返回 user_id = face_id
         :param face_info:
         :return:
         """
@@ -61,20 +65,27 @@ class FaceService(object):
             result = resp.json().get('result')
             for res in result.get('user_list'):
                 if res.get('score') > FACE_ACCESS:
-                    #todo 修改签到状态
+                    face_id = res.get('user_id')
+                    face = FaceDao.get_face_by_face_id(face_id)
+                    if not face:
+                        raise Exception('不存在该学生')
+                    if face.open_check != 0:
+                        raise Exception('不在签到时间范围内')
+                    if face.status == FaceStatus.CHECKED:
+                        raise Exception('已签到')
+                    face.status = FaceStatus.CHECKED
+                    db.session.commit()
                     return
             raise Exception('人脸验证未通过')
         except Exception as e:
             raise Exception(e.message)
 
-    def get_face_by_user_id(self, info):
+    def get_face_by_user_id(self, user_id, page=1):
         """
         根据用户id查询其下人脸信息
         :param
         :return:
         """
-        user_id = info.get('user_id')
-        page = info.get('page')
         face = FaceDao.get_face_by_user_id(user_id, page)
         if not face:
             return []

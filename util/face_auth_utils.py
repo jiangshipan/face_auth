@@ -32,7 +32,7 @@ class FaceAuthUtils(object):
         :return:
         """
         # 随机生成文件名
-        filename = ''.join(str(uuid.uuid4()).split('-'))
+        filename = ''.join(str(uuid.uuid4()).split('-')) + '.jpg'
         file_dir = FILE_PATH + random.choice(FILE_DIR)
         file_url = file_dir + '/' + filename
         try:

@@ -11,6 +11,7 @@ class Face(db.Model):
     face_url = db.Column(db.String(32), nullable=False, doc=u'人脸url')
     face_class = db.Column(db.String(32), nullable=False, doc=u'学生班级')
     status = db.Column(db.Integer, nullable=False, default=0, doc=u'状态 0 已签到 1 未签到 2 删除')
+    open_check = db.Column(db.Integer, nullable=False, default=1, doc=u'是否可以开始签到 0 可以签到 1 签到结束')
 
     @staticmethod
     def create(user_id, face_name, face_url, face_class):

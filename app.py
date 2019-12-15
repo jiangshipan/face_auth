@@ -51,7 +51,7 @@ def hello():
 
 
 if __name__ == '__main__':
-    import logging
+    # import logging
     # 配置日志
     # handler = logging.FileHandler('log/face_auth.log', encoding='UTF-8')
     # logging_format = logging.Formatter(
@@ -59,4 +59,4 @@ if __name__ == '__main__':
     # handler.setFormatter(logging_format)
     # app.logger.addHandler(handler)
     # 开启服务
-    app.run(debug=False)
+    app.run(debug=True)
