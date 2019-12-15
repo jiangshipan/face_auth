@@ -65,14 +65,13 @@ def get_all_by_one():
     """
     获取某个用户(教师)下的学生列表
     @:param
-    user_id, page
+    page
     :return:
     """
     try:
-        user_id = request.args.get('user_id')
-        page = request.args.get('page')
-        if not user_id:
-            raise Exception("please input user_id")
+        user_id = request.cookies.get('login_token').split('-')[0]
+        page = request.args.get('page', 1)
+        print page
         res = face_service.get_face_by_user_id(user_id, page)
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)

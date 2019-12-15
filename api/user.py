@@ -29,7 +29,7 @@ def login():
     try:
         msg = user_service.user_login(username, password)
         resp = make_response('{"msg": "success", "code": 0, "data": null}')
-        resp.set_cookie("login_token", msg, max_age=1 * 60 * 24)
+        resp.set_cookie("login_token", msg, max_age=1 * 3600 * 24)
     except Exception as e:
         return ResponseUtil.error_response(msg=e.message)
     return resp

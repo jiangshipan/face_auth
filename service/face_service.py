@@ -9,6 +9,7 @@ from config.config import FACE_LIB_USER_ADD, FACE_SEARCH, FACE_ACCESS
 from util.face_auth_utils import FaceAuthUtils
 from util.req_util import RequestUtil
 
+
 class FaceService(object):
     """
     人脸服务
@@ -86,19 +87,20 @@ class FaceService(object):
         :param
         :return:
         """
-        face = FaceDao.get_face_by_user_id(user_id, page)
-        if not face:
+        faces = FaceDao.get_face_by_user_id(user_id, page)
+        if not faces:
             return []
-        res = {
-            'id': face.id,
-            'name': face.face_name,
-            'belong': face.user_id,
-            'url': face.face_url,
-            'status': face.status,
-            'stu_class': face.face_class
-        }
+        res = []
+        for face in faces:
+            res.append({
+                'id': face.id,
+                'name': face.face_name,
+                'belong': face.user_id,
+                'url': face.face_url,
+                'status': face.status,
+                'stu_class': face.face_class
+            })
         return res
-
 
     def check_response(self, resp):
         """
