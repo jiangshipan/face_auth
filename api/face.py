@@ -90,6 +90,28 @@ def redirect_input():
     return redirect(FACE_FRONT + '#/input/%s' % uid)
 
 
+@limiter.limit("10 per second")
+@face.route("/init")
+def init_face():
+    """
+    初始化某个班的签到状态
+    :return:
+    """
+    """
+    check_record签到记录表:
+    id, class, user_id, nochecked:text 未签到学生姓名, create_time.
+    """
+    try:
+        stu_class = request.args.get('stu_class')
+        if not stu_class:
+            raise Exception("请输入班级")
+        user_id = request.cookies.get('login_token').split('-')[0]
+        face_service.init_face(stu_class, user_id)
+    except Exception as e:
+        return ResponseUtil.error_response(msg=e.message)
+
+
+
 def upload_file2base64(files):
     if 'file' not in files:
         raise Exception('缺少人像图片')

@@ -102,6 +102,15 @@ class FaceService(object):
             })
         return res
 
+    def init_face(self, stu_class, user_id):
+        """
+        :param stu_class: 班级
+        :param user_id: 老师的id
+        :return:
+        """
+        pass
+
+
     def check_response(self, resp):
         """
         检验baidu_api的response
