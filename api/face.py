@@ -71,17 +71,19 @@ def get_all_by_one():
     try:
         user_id = request.cookies.get('login_token').split('-')[0]
         page = request.args.get('page', 1)
-        print page
-        res = face_service.get_face_by_user_id(user_id, page)
+        filters = build_filters(request.args)
+        res = face_service.get_face_by_user_id(user_id, filters, page)
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')
+
 
 @limiter.limit("10 per second")
 @face.route("/redirect/check")
 def redirect_check():
     uid = request.cookies.get('login_token').split('-')[0]
     return redirect(FACE_FRONT + '#/check/%s' % uid)
+
 
 @limiter.limit("10 per second")
 @face.route("/redirect/input")
@@ -97,19 +99,15 @@ def init_face():
     初始化某个班的签到状态
     :return:
     """
-    """
-    check_record签到记录表:
-    id, class, user_id, nochecked:text 未签到学生姓名, create_time.
-    """
     try:
         stu_class = request.args.get('stu_class')
         if not stu_class:
             raise Exception("请输入班级")
         user_id = request.cookies.get('login_token').split('-')[0]
         face_service.init_face(stu_class, user_id)
+        return ResponseUtil.success_response(msg='success')
     except Exception as e:
         return ResponseUtil.error_response(msg=e.message)
-
 
 
 def upload_file2base64(files):
@@ -122,3 +120,14 @@ def upload_file2base64(files):
         raise Exception('仅支持jpg,jpeg,png类型的文件')
     file_base64 = base64.b64encode(file.read())
     return file_base64, file.filename
+
+
+def build_filters(params):
+    filter_fields = ['face_name', 'stu_class', 'status']
+    filters = {}
+    for item in filter_fields:
+        if params.get(item):
+            filters.update({
+                item: params.get(item)
+            })
+    return filters

@@ -1,6 +1,7 @@
 # coding= utf-8
 from api.user import user
 from api.face import face
+from api.record import record
 from client.redis_client import redis_client
 from config.db import app
 from flask import request
@@ -10,6 +11,7 @@ from util.resp_util import ResponseUtil
 
 app.register_blueprint(user, url_prefix='/user')
 app.register_blueprint(face, url_prefix='/face')
+app.register_blueprint(record, url_prefix='/record')
 
 # 不进行校验的方法
 ALLOW_METHOD = ['/user/login', '/user/reg', '/', '/user/code', '/face/add', '/face/search']

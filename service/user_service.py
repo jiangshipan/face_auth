@@ -71,5 +71,5 @@ class UserService(object):
         token = redis_client.get(user_id)
         if not token:
             token = str(user_id) + '-' + ''.join(str(uuid.uuid4()).split('-'))
-            redis_client.set(user_id, token, ex=1 * 60 * 24)
+            redis_client.set(user_id, token, ex=1 * 3600 * 24)
         return token

@@ -13,7 +13,15 @@ class FaceStatus(object):
     """
     人脸签到状态
     """
-    NOCHECK = 0 # 未签到
+    UNCHECK = 0 # 未签到
     CHECKED = 1 # 已签到
     FORBID = 2 # 删除
+
+
+class Open_Check(object):
+    """
+    当前是否可签到
+    """
+    YES = 0
+    NO = 1
 

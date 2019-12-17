@@ -1,12 +1,12 @@
 # coding= utf-8
 
 # redis配置
-REDIS_HOST = '127.0.0.1'
-# REDIS_HOST = '10.224.24.215'
+# REDIS_HOST = '127.0.0.1'
+REDIS_HOST = '10.224.24.215'
 REDIS_PORT = '6379'
 # mysql配置
-DATABASE_URI = 'mysql+pymysql://root:qqq110@127.0.0.1:3306/face_auth?charset=utf8mb4'
-# DATABASE_URI = 'mysql+pymysql://root:qqq110@10.224.24.215:3306/face_auth?charset=utf8mb4'
+# DATABASE_URI = 'mysql+pymysql://root:qqq110@127.0.0.1:3306/face_auth?charset=utf8mb4'
+DATABASE_URI = 'mysql+pymysql://root:qqq110@10.224.24.215:3306/face_auth?charset=utf8mb4'
 
 
 # 邮件配置

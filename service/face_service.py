@@ -1,11 +1,13 @@
 # coding= utf-8
 import json
 
-from config.enum import FaceStatus
+from config.enum import FaceStatus, Open_Check
 from dao.face_dao import FaceDao
+from dao.record_dao import RecordDao
 from model.face import Face
 from config.db import db
 from config.config import FACE_LIB_USER_ADD, FACE_SEARCH, FACE_ACCESS
+from model.record import Record
 from util.face_auth_utils import FaceAuthUtils
 from util.req_util import RequestUtil
 
@@ -70,7 +72,7 @@ class FaceService(object):
                     face = FaceDao.get_face_by_face_id(face_id)
                     if not face:
                         raise Exception('不存在该学生')
-                    if face.open_check != 0:
+                    if face.open_check != Open_Check.YES:
                         raise Exception('不在签到时间范围内')
                     if face.status == FaceStatus.CHECKED:
                         raise Exception('已签到')
@@ -81,13 +83,13 @@ class FaceService(object):
         except Exception as e:
             raise Exception(e.message)
 
-    def get_face_by_user_id(self, user_id, page=1):
+    def get_face_by_user_id(self, user_id, filters, page=1):
         """
         根据用户id查询其下人脸信息
         :param
         :return:
         """
-        faces = FaceDao.get_face_by_user_id(user_id, page)
+        faces = FaceDao.get_face_by_user_id(user_id, page, filters)
         if not faces:
             return []
         res = []
@@ -107,8 +109,33 @@ class FaceService(object):
         :param stu_class: 班级
         :param user_id: 老师的id
         :return:
+        0. 检查现在是否处于签到时期
+        1. 统计出未签到的人，生成签到记录
+        2. 初始化所有该stu_class & user_id的签到状态为未签到
+        3. 修改当前不可进行签到
         """
-        pass
+
+        # 检查现在是否处于签到时期
+        faces = FaceDao.get_by_class_user_id2(stu_class, user_id, Open_Check.YES)
+        print faces
+        if not faces:
+            raise Exception("暂未开放签到")
+        unchecked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.UNCHECK)
+        unchecked = [_.face_name for _ in unchecked_faces]
+        try:
+            record = Record.create(user_id, stu_class, unchecked)
+            RecordDao.insert(record)
+            checked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.CHECKED)
+            # 未签到的人不需要初始化了
+            for face in checked_faces:
+                face.status = FaceStatus.UNCHECK
+                face.open_check = Open_Check.NO
+            for face in unchecked_faces:
+                face.open_check = Open_Check.NO
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise Exception(e.message)
 
 
     def check_response(self, resp):

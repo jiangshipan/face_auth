@@ -11,9 +11,6 @@ class UserDao(object):
         db.session.add(user)
         db.session.flush([user])
 
-    # @staticmethod
-    # def update(user):
-    #     db.session.flush([user])
 
     @staticmethod
     def get_user_by_username(username):
