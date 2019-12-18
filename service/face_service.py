@@ -11,7 +11,7 @@ from config.config import FACE_LIB_USER_ADD, FACE_SEARCH, FACE_ACCESS
 from model.record import Record
 from util.face_auth_utils import FaceAuthUtils
 from util.req_util import RequestUtil
-
+from collections import defaultdict
 
 class FaceService(object):
     """
@@ -141,6 +141,7 @@ class FaceService(object):
 
     def get_class_by_user_id(self, user_id):
         faces = FaceDao.get_class_by_user_id(user_id)
+        face_class2sum = defaultdict(int)
         res = {'checked': [], 'unchecked': []}
         for face in faces:
             checked = res.get('checked')
@@ -149,6 +150,8 @@ class FaceService(object):
                 checked.append(face.face_class)
             if face.status == FaceStatus.UNCHECK and face.face_class not in unchecked:
                 unchecked.append(face.face_class)
+            face_class2sum[face.face_class] += 1
+        res.update({'sum': face_class2sum})
         return res
 
 
