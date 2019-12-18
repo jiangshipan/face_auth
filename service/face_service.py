@@ -119,7 +119,6 @@ class FaceService(object):
 
         # 检查现在是否处于签到时期
         faces = FaceDao.get_by_class_user_id2(stu_class, user_id, Open_Check.YES)
-        print faces
         if not faces:
             raise Exception("暂未开放签到")
         unchecked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.UNCHECK)
@@ -139,6 +138,19 @@ class FaceService(object):
             db.session.rollback()
             raise Exception(e.message)
 
+
+    def start_check(self, user_id, stu_class):
+        # 检查现在是否处于签到时期
+        faces = FaceDao.get_by_class_user_id2(stu_class, user_id, Open_Check.NO)
+        if not faces:
+            raise Exception("该班已处于签到状态")
+        try:
+            for face in faces:
+                face.open_check = Open_Check.YES
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise Exception(e.message)
 
     def check_response(self, resp):
         """

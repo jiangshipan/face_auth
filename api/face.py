@@ -93,10 +93,10 @@ def redirect_input():
 
 
 @limiter.limit("10 per second")
-@face.route("/init")
+@face.route("/end")
 def init_face():
     """
-    初始化某个班的签到状态
+    初始化某个班的签到状态  or 结束上次签到
     :return:
     """
     try:
@@ -108,6 +108,24 @@ def init_face():
         return ResponseUtil.success_response(msg='success')
     except Exception as e:
         return ResponseUtil.error_response(msg=e.message)
+
+
+@limiter.limit("10 per second")
+@face.route("/start")
+def start_check():
+    """
+    开始签到
+    :return:
+    """
+    user_id = request.cookies.get('login_token').split('-')[0]
+    try:
+        stu_class = request.args.get('stu_class')
+        if not stu_class:
+            raise Exception("请输入班级")
+        face_service.start_check(user_id, stu_class)
+    except Exception as e:
+        return ResponseUtil.error_response(msg=e.message)
+    return ResponseUtil.success_response(msg='success')
 
 
 def upload_file2base64(files):

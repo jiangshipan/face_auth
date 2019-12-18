@@ -72,3 +72,16 @@ def register_code():
     return ResponseUtil.success_response(msg='success')
 
 
+@limiter.limit("10 per second")
+@user.route("/logout")
+def logout():
+    """
+    用户注销
+    :return:
+    """
+    user_id = request.cookies.get('login_token').split('-')[0]
+    try:
+        user_service.logout(user_id)
+    except Exception as e:
+        return ResponseUtil.error_response(msg=e.message)
+    return ResponseUtil.success_response(msg='success')

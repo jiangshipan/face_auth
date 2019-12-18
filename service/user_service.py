@@ -73,3 +73,6 @@ class UserService(object):
             token = str(user_id) + '-' + ''.join(str(uuid.uuid4()).split('-'))
             redis_client.set(user_id, token, ex=1 * 3600 * 24)
         return token
+
+    def logout(self, user_id):
+        redis_client.delete(user_id)
