@@ -55,3 +55,9 @@ class FaceDao(object):
     def get_by_class_user_id2(stu_class, user_id, oepn_check):
         return Face.query.filter(Face.user_id == user_id, Face.face_class == stu_class,
                                  Face.open_check == oepn_check).all()
+
+
+    @staticmethod
+    def get_class_by_user_id(user_id):
+        return Face.query.filter(Face.user_id == user_id, Face.status != FaceStatus.FORBID)\
+            .with_entities(Face.face_class, Face.status).all()

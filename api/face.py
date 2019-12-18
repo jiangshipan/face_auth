@@ -127,6 +127,21 @@ def start_check():
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
 
+@limiter.limit("10 per second")
+@face.route("/get_class")
+def get_class():
+    """
+    获得当前教师所管理的班级
+    :return:
+    """
+    user_id = request.cookies.get('login_token').split('-')[0]
+    try:
+        res = face_service.get_class_by_user_id(user_id)
+    except Exception as e:
+        return ResponseUtil.error_response(data=[], msg=e.message)
+    return ResponseUtil.success_response(data=res, msg='success')
+
+
 
 def upload_file2base64(files):
     if 'file' not in files:

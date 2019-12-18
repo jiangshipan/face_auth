@@ -124,7 +124,7 @@ class FaceService(object):
         unchecked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.UNCHECK)
         unchecked = [_.face_name for _ in unchecked_faces]
         try:
-            record = Record.create(user_id, stu_class, unchecked)
+            record = Record.create(user_id, stu_class, json.dumps({'data': unchecked}))
             RecordDao.insert(record)
             checked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.CHECKED)
             # 未签到的人不需要初始化了
@@ -137,6 +137,20 @@ class FaceService(object):
         except Exception as e:
             db.session.rollback()
             raise Exception(e.message)
+
+
+    def get_class_by_user_id(self, user_id):
+        faces = FaceDao.get_class_by_user_id(user_id)
+        res = {'checked': [], 'unchecked': []}
+        for face in faces:
+            checked = res.get('checked')
+            unchecked = res.get('unchecked')
+            if face.status == FaceStatus.CHECKED and face.face_class not in checked:
+                checked.append(face.face_class)
+            if face.status == FaceStatus.UNCHECK and face.face_class not in unchecked:
+                unchecked.append(face.face_class)
+        return res
+
 
 
     def start_check(self, user_id, stu_class):
