@@ -4,6 +4,7 @@ import json
 from config.enum import FaceStatus, Open_Check
 from dao.face_dao import FaceDao
 from dao.record_dao import RecordDao
+from dao.user_dao import UserDao
 from model.face import Face
 from config.db import db
 from config.config import FACE_LIB_USER_ADD, FACE_SEARCH, FACE_ACCESS
@@ -92,12 +93,13 @@ class FaceService(object):
         faces = FaceDao.get_face_by_user_id(user_id, page, filters)
         if not faces:
             return []
+        user = UserDao.get_user_by_user_id(user_id)
         res = []
         for face in faces:
             res.append({
                 'id': face.id,
                 'name': face.face_name,
-                'belong': face.user_id,
+                'belong': user.username,
                 'url': face.face_url,
                 'status': face.status,
                 'stu_class': face.face_class

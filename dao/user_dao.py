@@ -15,3 +15,7 @@ class UserDao(object):
     @staticmethod
     def get_user_by_username(username):
         return User.query.filter(User.username == username, User.status == UserStatus.NORMAL).first()
+
+    @staticmethod
+    def get_user_by_user_id(user_id):
+        return User.query.filter(User.id == user_id, User.status == UserStatus.NORMAL).first()
