@@ -150,9 +150,9 @@ class FaceService(object):
         for face in faces:
             checked = res.get('checked')
             unchecked = res.get('unchecked')
-            if face.status == FaceStatus.CHECKED and face.face_class not in checked:
+            if face.open_check == Open_Check.YES and face.face_class not in checked:
                 checked.append(face.face_class)
-            if face.status == FaceStatus.UNCHECK and face.face_class not in unchecked:
+            if face.open_check == Open_Check.NO and face.face_class not in unchecked:
                 unchecked.append(face.face_class)
             face_class2sum[face.face_class] += 1
         res.update({'sum': face_class2sum})
