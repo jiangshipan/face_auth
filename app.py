@@ -5,7 +5,6 @@ from api.record import record
 from client.redis_client import redis_client
 from config.db import app
 from flask import request
-
 from util.resp_util import ResponseUtil
 
 
@@ -53,12 +52,5 @@ def hello():
 
 
 if __name__ == '__main__':
-    # import logging
-    # 配置日志
-    # handler = logging.FileHandler('log/face_auth.log', encoding='UTF-8')
-    # logging_format = logging.Formatter(
-    #     '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-    # handler.setFormatter(logging_format)
-    # app.logger.addHandler(handler)
     # 开启服务
     app.run(debug=True)

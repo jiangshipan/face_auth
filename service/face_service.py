@@ -1,5 +1,6 @@
 # coding= utf-8
 import json
+import traceback
 
 from config.enum import FaceStatus, Open_Check
 from dao.face_dao import FaceDao
@@ -45,6 +46,7 @@ class FaceService(object):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception(e.message)
 
     def face_search(self, face_info):
@@ -82,6 +84,7 @@ class FaceService(object):
                     return
             raise Exception('人脸验证未通过')
         except Exception as e:
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception(e.message)
 
     def get_face_by_user_id(self, user_id, filters, page=1):
@@ -136,6 +139,7 @@ class FaceService(object):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception(e.message)
 
 
@@ -167,6 +171,7 @@ class FaceService(object):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception(e.message)
 
     def check_response(self, resp):

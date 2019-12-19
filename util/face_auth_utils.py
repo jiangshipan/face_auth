@@ -1,10 +1,11 @@
 # coding= utf-8
 import random
 import base64
+import traceback
 import uuid
 import os
-
-from config.config import FILE_PATH, FILE_DIR
+from datetime import datetime
+from config.config import FILE_PATH, FILE_DIR, LOG_NAME
 
 
 class FaceAuthUtils(object):
@@ -41,8 +42,15 @@ class FaceAuthUtils(object):
             with open(file_url, 'wb') as f:
                 f.write(base64.b64decode(file_base64))
         except Exception as e:
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception('文件上传失败, 原因:' % e.message)
         return file_url
+
+    @staticmethod
+    def save_exception(exception):
+        with open(LOG_NAME, "a+") as f:
+            content = datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n' + exception
+            f.write(content + '\n')
 
 
 if __name__ == '__main__':

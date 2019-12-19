@@ -1,7 +1,9 @@
 # coding= utf-8
 import requests
 import json
+import traceback
 from config.config import BAIDU_TOKEN_URL, API_KEY, SECRET_KEY
+from util.face_auth_utils import FaceAuthUtils
 
 
 class RequestUtil(object):
@@ -29,5 +31,9 @@ class RequestUtil(object):
             resp = requests.get(url=url).text
             access_token = json.loads(resp).get('access_token')
         except Exception as e:
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise e
         return access_token
+
+if __name__ == '__main__':
+    print RequestUtil.get_access_token()

@@ -1,5 +1,6 @@
 # coding= utf-8
 import hashlib
+import traceback
 import uuid
 
 from dao.email_dao import EmailDao
@@ -8,6 +9,7 @@ from model.email import Email
 from model.user import User
 from config.db import db
 from client.redis_client import redis_client
+from util.face_auth_utils import FaceAuthUtils
 
 
 class UserService(object):
@@ -60,6 +62,7 @@ class UserService(object):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
+            FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception(e.message)
 
     def assign_token(self, user_id):

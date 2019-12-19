@@ -1,12 +1,10 @@
 # coding= utf-8
 
 # redis配置
-# REDIS_HOST = '127.0.0.1'
-REDIS_HOST = '10.224.24.215'
+REDIS_HOST = '119.3.212.165'
 REDIS_PORT = '6379'
 # mysql配置
-# DATABASE_URI = 'mysql+pymysql://root:qqq110@127.0.0.1:3306/face_auth?charset=utf8mb4'
-DATABASE_URI = 'mysql+pymysql://root:qqq110@10.224.24.215:3306/face_auth?charset=utf8mb4'
+DATABASE_URI = 'mysql+pymysql://jiangshipan:19980502@119.3.212.165:3306/face_auth?charset=utf8mb4'
 
 
 # 邮件配置
@@ -14,18 +12,24 @@ MAIL_SERVER = 'smtp.qq.com'
 MAIL_PORT = 25
 MAIL_USE_TLS = True
 MAIL_USERNAME = '1320740751@qq.com'
-MAIL_PASSWORD = 'ektzydckmmjfjgjc'
+MAIL_PASSWORD = 'gdlgnjyvifnoibib'
 
 # 分页信息
 PAGE_LIMIT = 10
 # 允许上传的文件类型
 FILE_EXT = ['png', 'jpeg', 'jpg', 'JPG', 'PNG', 'JPEG']
 # macos
-# FILE_PATH = '/Users/jiangshipan/Desktop/upload_img/'
+FILE_PATH = '/Users/jiangshipan/Desktop/upload_img/'
 # linux
-FILE_PATH = '/home/jiangshipan/桌面/upload_img/'
+# FILE_PATH = '/home/jiangshipan/桌面/upload_img/'
 # 随机文件夹
 FILE_DIR = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9']
+# 日志文件
+# mac
+LOG_NAME = '/Users/jiangshipan/Desktop/today_log'
+# linux
+# LOG_NAME = '/home/jiangshipan/桌面/today_log'
+
 
 # 获取access_token
 BAIDU_TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'

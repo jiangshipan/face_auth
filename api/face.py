@@ -82,7 +82,7 @@ def get_all_by_one():
 @face.route("/redirect/check")
 def redirect_check():
     uid = request.cookies.get('login_token').split('-')[0]
-    return redirect(FACE_FRONT + '#/check/%s' % uid)
+    return redirect(FACE_FRONT + '#/face/check/%s' % uid)
 
 
 @limiter.limit("10 per second")
