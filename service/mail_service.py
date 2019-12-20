@@ -7,7 +7,7 @@ from client.redis_client import redis_client
 from concurrent.futures import ThreadPoolExecutor
 
 from dao.email_dao import EmailDao
-from util.face_auth_utils import FaceAuthUtils
+from util.face_auth_utils import FaceAuthUtils, Singleton
 
 executor = ThreadPoolExecutor(2)
 
@@ -16,6 +16,10 @@ class MailService(object):
     """
     邮箱服务
     """
+
+    __metaclass__ = Singleton
+
+
     def send_register_code(self, email):
         """
         发送注册码 有效期10分钟

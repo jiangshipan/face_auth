@@ -22,7 +22,7 @@ def get_reocrd():
     page = request.args.get('page', 1)
     try:
         filters = build_filters(request.args)
-        res = record_service.get_record(user_id, page, filters)
+        res = record_service.get_record(user_id, int(page), filters)
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')

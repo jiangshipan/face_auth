@@ -9,13 +9,14 @@ from model.email import Email
 from model.user import User
 from config.db import db
 from client.redis_client import redis_client
-from util.face_auth_utils import FaceAuthUtils
+from util.face_auth_utils import FaceAuthUtils, Singleton
 
 
 class UserService(object):
     """
     用户服务
     """
+    __metaclass__ = Singleton
 
     def user_login(self, username, password):
         """
@@ -79,3 +80,14 @@ class UserService(object):
 
     def logout(self, user_id):
         redis_client.delete(user_id)
+
+
+    def get_user_info(self, user_id):
+        user = UserDao.get_user_by_user_id(user_id)
+        if not user:
+            raise Exception("不存在该用户或被禁用")
+        user_info = {
+            'username': user.username,
+            'nickname': user.nickname,
+        }
+        return user_info

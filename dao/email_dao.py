@@ -1,9 +1,13 @@
 # coding= utf-8
 from config.db import db
 from model.email import Email
+from util.face_auth_utils import Singleton
 
 
 class EmailDao(object):
+
+    __metaclass__ = Singleton
+
 
     @staticmethod
     def insert(email):

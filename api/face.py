@@ -72,7 +72,7 @@ def get_all_by_one():
         user_id = request.cookies.get('login_token').split('-')[0]
         page = request.args.get('page', 1)
         filters = build_filters(request.args)
-        res = face_service.get_face_by_user_id(user_id, filters, page)
+        res = face_service.get_face_by_user_id(user_id, filters, int(page))
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')
@@ -141,6 +141,21 @@ def get_class():
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')
 
+
+@limiter.limit("10 per second")
+@face.route("/update")
+def update_face_status():
+    """
+    修改人脸状态： 已签到，未签到， 删除
+    :return:
+    """
+    face_id = request.args.get('id')
+    face_status = request.args.get('status')
+    try:
+        face_service.update_face_status(face_id, face_status)
+    except Exception as e:
+        return ResponseUtil.error_response(msg=e.message)
+    return ResponseUtil.success_response(msg='success')
 
 
 def upload_file2base64(files):

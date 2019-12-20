@@ -85,3 +85,17 @@ def logout():
     except Exception as e:
         return ResponseUtil.error_response(msg=e.message)
     return ResponseUtil.success_response(msg='success')
+
+@limiter.limit("10 per second")
+@user.route("/get")
+def get_user_info():
+    """
+    获取当前登陆用户的信息
+    :return:
+    """
+    user_id = request.cookies.get('login_token').split('-')[0]
+    try:
+        user_info = user_service.get_user_info(user_id)
+    except Exception as e:
+        return ResponseUtil.error_response(data={}, msg=e.message)
+    return ResponseUtil.success_response(data=user_info, msg='success')

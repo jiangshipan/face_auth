@@ -3,9 +3,13 @@ from config.db import db
 from config.enum import FaceStatus
 from model.face import Face
 from config.config import PAGE_LIMIT
-
+from util.face_auth_utils import Singleton
+from sqlalchemy import func
 
 class FaceDao(object):
+
+    __metaclass__ = Singleton
+
 
     @staticmethod
     def insert(user):
@@ -32,8 +36,9 @@ class FaceDao(object):
             filters.append(Face.status == status)
         else:
             filters.append(Face.status != FaceStatus.FORBID)
-
-        return Face.query.filter(*filters).limit(PAGE_LIMIT).offset(page - 1).all()
+        faces = Face.query.filter(*filters).all()
+        total = len(faces)
+        return Face.query.filter(*filters).limit(PAGE_LIMIT).offset((page - 1) * PAGE_LIMIT).all(), total
 
     @staticmethod
     def get_face_by_face_id(face_id):
@@ -61,3 +66,4 @@ class FaceDao(object):
     def get_class_by_user_id(user_id):
         return Face.query.filter(Face.user_id == user_id, Face.status != FaceStatus.FORBID)\
             .with_entities(Face.face_class, Face.open_check).all()
+

@@ -10,7 +10,7 @@ from model.face import Face
 from config.db import db
 from config.config import FACE_LIB_USER_ADD, FACE_SEARCH, FACE_ACCESS
 from model.record import Record
-from util.face_auth_utils import FaceAuthUtils
+from util.face_auth_utils import FaceAuthUtils, Singleton
 from util.req_util import RequestUtil
 from collections import defaultdict
 
@@ -18,6 +18,9 @@ class FaceService(object):
     """
     人脸服务
     """
+
+    __metaclass__ = Singleton
+
 
     def face_add(self, face_info):
         """
@@ -93,13 +96,14 @@ class FaceService(object):
         :param
         :return:
         """
-        faces = FaceDao.get_face_by_user_id(user_id, page, filters)
+        faces, total = FaceDao.get_face_by_user_id(user_id, page, filters)
         if not faces:
-            return []
+            return {'data': [], 'total': 0}
         user = UserDao.get_user_by_user_id(user_id)
-        res = []
+        res = {}
+        data = []
         for face in faces:
-            res.append({
+            data.append({
                 'id': face.id,
                 'name': face.face_name,
                 'belong': user.username,
@@ -107,6 +111,10 @@ class FaceService(object):
                 'status': face.status,
                 'stu_class': face.face_class
             })
+        res.update({
+            'data': data,
+            'total': total
+        })
         return res
 
     def init_face(self, stu_class, user_id):
@@ -125,7 +133,7 @@ class FaceService(object):
         if not faces:
             raise Exception("暂未开放签到")
         unchecked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.UNCHECK)
-        unchecked = [_.face_name for _ in unchecked_faces]
+        unchecked = [_.face_name + ' ' for _ in unchecked_faces]
         try:
             record = Record.create(user_id, stu_class, json.dumps({'data': unchecked}))
             RecordDao.insert(record)
@@ -168,6 +176,18 @@ class FaceService(object):
         try:
             for face in faces:
                 face.open_check = Open_Check.YES
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            FaceAuthUtils.save_exception(traceback.format_exc())
+            raise Exception(e.message)
+
+    def update_face_status(self, face_id, face_status):
+        face = FaceDao.get_face_by_face_id(face_id)
+        if not face:
+            raise Exception("当前学生信息不存在")
+        try:
+            face.status = face_status
             db.session.commit()
         except Exception as e:
             db.session.rollback()

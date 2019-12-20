@@ -2,9 +2,13 @@
 from config.db import db
 from model.user import User
 from config.enum import UserStatus
+from util.face_auth_utils import Singleton
 
 
 class UserDao(object):
+
+    __metaclass__ = Singleton
+
 
     @staticmethod
     def insert(user):
