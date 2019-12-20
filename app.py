@@ -13,7 +13,7 @@ app.register_blueprint(face, url_prefix='/face')
 app.register_blueprint(record, url_prefix='/record')
 
 # 不进行校验的方法
-ALLOW_METHOD = ['/user/login', '/user/reg', '/', '/user/code', '/face/add', '/face/search']
+ALLOW_METHOD = ['/user/login', '/user/reg', '/', '/user/code']
 
 
 @app.before_request
