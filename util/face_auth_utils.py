@@ -5,7 +5,7 @@ import traceback
 import uuid
 import os
 from datetime import datetime
-from config.config import FILE_PATH, FILE_DIR, LOG_NAME
+from config.config import FILE_PATH, FILE_DIR, LOG_NAME, VISIT_DIR
 
 
 class FaceAuthUtils(object):
@@ -34,7 +34,8 @@ class FaceAuthUtils(object):
         """
         # 随机生成文件名
         filename = ''.join(str(uuid.uuid4()).split('-')) + '.jpg'
-        file_dir = FILE_PATH + random.choice(FILE_DIR)
+        file_choice = random.choice(FILE_DIR)
+        file_dir = FILE_PATH + file_choice
         file_url = file_dir + '/' + filename
         try:
             if not os.path.exists(file_dir):
@@ -44,7 +45,7 @@ class FaceAuthUtils(object):
         except Exception as e:
             FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception('文件上传失败, 原因:' % e.message)
-        return file_url
+        return VISIT_DIR + file_choice + '/' + filename
 
     @staticmethod
     def save_exception(exception):

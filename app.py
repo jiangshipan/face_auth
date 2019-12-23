@@ -53,4 +53,4 @@ def hello():
 
 if __name__ == '__main__':
     # 开启服务
-    app.run(debug=True)
+    app.run(debug=False)

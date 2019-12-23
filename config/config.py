@@ -21,13 +21,15 @@ FILE_EXT = ['png', 'jpeg', 'jpg', 'JPG', 'PNG', 'JPEG']
 # macos
 # FILE_PATH = '/Users/jiangshipan/Desktop/upload_img/'
 # linux服务器
-FILE_PATH = '/data/nginx/html/images/'
+FILE_PATH = '/images/'
 # 随机文件夹
 FILE_DIR = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9']
+# 图片访问路径
+VISIT_DIR = 'http://119.3.212.165:8080/images/'
 # 日志文件
 # mac
 # LOG_NAME = '/Users/jiangshipan/Desktop/today_log'
-LOG_NAME = '/data/nginx/log/today_log'
+LOG_NAME = '/log/today_log'
 
 
 # 获取access_token
