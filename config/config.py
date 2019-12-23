@@ -19,16 +19,15 @@ PAGE_LIMIT = 10
 # 允许上传的文件类型
 FILE_EXT = ['png', 'jpeg', 'jpg', 'JPG', 'PNG', 'JPEG']
 # macos
-FILE_PATH = '/Users/jiangshipan/Desktop/upload_img/'
-# linux
-# FILE_PATH = '/home/jiangshipan/桌面/upload_img/'
+# FILE_PATH = '/Users/jiangshipan/Desktop/upload_img/'
+# linux服务器
+FILE_PATH = '/data/nginx/html/images/'
 # 随机文件夹
 FILE_DIR = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9']
 # 日志文件
 # mac
-LOG_NAME = '/Users/jiangshipan/Desktop/today_log'
-# linux
-# LOG_NAME = '/home/jiangshipan/桌面/today_log'
+# LOG_NAME = '/Users/jiangshipan/Desktop/today_log'
+LOG_NAME = '/data/nginx/log/today_log'
 
 
 # 获取access_token

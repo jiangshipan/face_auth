@@ -87,6 +87,7 @@ class UserService(object):
         if not user:
             raise Exception("不存在该用户或被禁用")
         user_info = {
+            'id': user.id,
             'username': user.username,
             'nickname': user.nickname,
         }

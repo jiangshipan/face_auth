@@ -9,7 +9,7 @@ from util.form.face_form import FaceRegister, FaceSearch
 from util.form.form import validate_form
 from util.resp_util import ResponseUtil
 from config.limiter import limiter
-from config.config import PAGE_LIMIT, FILE_EXT, FACE_FRONT
+from config.config import FILE_EXT, FACE_FRONT
 
 face = Blueprint('face', __name__)
 
