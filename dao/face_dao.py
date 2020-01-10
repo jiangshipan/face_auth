@@ -6,16 +6,14 @@ from config.config import PAGE_LIMIT
 from util.face_auth_utils import Singleton
 from sqlalchemy import func
 
+
 class FaceDao(object):
-
     __metaclass__ = Singleton
-
 
     @staticmethod
     def insert(user):
         db.session.add(user)
         db.session.flush([user])
-
 
     @staticmethod
     def get_by_user_id_and_face_name(user_id, face_name):
@@ -61,9 +59,7 @@ class FaceDao(object):
         return Face.query.filter(Face.user_id == user_id, Face.face_class == stu_class,
                                  Face.open_check == oepn_check).all()
 
-
     @staticmethod
     def get_class_by_user_id(user_id):
-        return Face.query.filter(Face.user_id == user_id, Face.status != FaceStatus.FORBID)\
+        return Face.query.filter(Face.user_id == user_id, Face.status != FaceStatus.FORBID) \
             .with_entities(Face.face_class, Face.open_check).all()
-

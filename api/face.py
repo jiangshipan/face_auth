@@ -96,7 +96,7 @@ def redirect_input():
 @face.route("/end")
 def init_face():
     """
-    初始化某个班的签到状态  or 结束上次签到
+    结束上次签到
     :return:
     """
     try:

@@ -10,12 +10,6 @@ class Record(db.Model):
     pro_class = db.Column(db.String(32), nullable=False, doc=u'专业班级')
     unchecked = db.Column(db.Text, nullable=False, default='', doc=u'未签到的人')
     create_time = db.Column(db.DateTime, nullable=False, default=func.now(), doc=u'创建时间')
+    record = db.Column(db.Text, nullable=False, default='', doc=u'签到记录')
+    status = db.Column(db.Integer, nullable=False, default=1, doc=u'签到结束前是否可查, 0-可看,1-不可看')
 
-
-    @staticmethod
-    def create(user_id, pro_class, unchecked):
-        record = Record()
-        record.user_id = user_id
-        record.pro_class = pro_class
-        record.unchecked = unchecked
-        return record

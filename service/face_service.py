@@ -2,7 +2,7 @@
 import json
 import traceback
 
-from config.enum import FaceStatus, Open_Check
+from config.enum import FaceStatus, Open_Check, IS_OPEN
 from dao.face_dao import FaceDao
 from dao.record_dao import RecordDao
 from dao.user_dao import UserDao
@@ -13,6 +13,8 @@ from model.record import Record
 from util.face_auth_utils import FaceAuthUtils, Singleton
 from util.req_util import RequestUtil
 from collections import defaultdict
+from datetime import datetime
+
 
 class FaceService(object):
     """
@@ -20,7 +22,6 @@ class FaceService(object):
     """
 
     __metaclass__ = Singleton
-
 
     def face_add(self, face_info):
         """
@@ -83,6 +84,12 @@ class FaceService(object):
                     if face.status == FaceStatus.CHECKED:
                         raise Exception('已签到')
                     face.status = FaceStatus.CHECKED
+                    # 获取此次签到记录
+                    record = RecordDao.get_lastest_record_by_class(user_id, face.face_class)
+                    record_content = json.loads(record.record)
+                    msg = '%s %s 已经签到' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), face.face_name.encode('utf-8'))
+                    record_content.get('data').append(msg)
+                    record.record = json.dumps(record_content)
                     db.session.commit()
                     return
             raise Exception('人脸验证未通过')
@@ -135,8 +142,11 @@ class FaceService(object):
         unchecked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.UNCHECK)
         unchecked = [_.face_name + ' ' for _ in unchecked_faces]
         try:
-            record = Record.create(user_id, stu_class, json.dumps({'data': unchecked}))
-            RecordDao.insert(record)
+            # 查询签到记录, 并修改为可查
+            record = RecordDao.get_lastest_record_by_class(user_id, stu_class)
+            record.unchecked = json.dumps({'data': unchecked})
+            record.status = IS_OPEN.YES
+
             checked_faces = FaceDao.get_by_class_user_id(stu_class, user_id, FaceStatus.CHECKED)
             # 未签到的人不需要初始化了
             for face in checked_faces:
@@ -149,7 +159,6 @@ class FaceService(object):
             db.session.rollback()
             FaceAuthUtils.save_exception(traceback.format_exc())
             raise Exception(e.message)
-
 
     def get_class_by_user_id(self, user_id):
         faces = FaceDao.get_class_by_user_id(user_id)
@@ -166,8 +175,6 @@ class FaceService(object):
         res.update({'sum': face_class2sum})
         return res
 
-
-
     def start_check(self, user_id, stu_class):
         # 检查现在是否处于签到时期
         faces = FaceDao.get_by_class_user_id2(stu_class, user_id, Open_Check.NO)
@@ -176,6 +183,13 @@ class FaceService(object):
         try:
             for face in faces:
                 face.open_check = Open_Check.YES
+            # 生成一条签到记录
+            record = Record()
+            record.user_id = user_id
+            record.pro_class = stu_class
+            record.unchecked = json.dumps({'data': []})
+            record.record = json.dumps({'data': []})
+            db.session.add(record)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -204,3 +218,6 @@ class FaceService(object):
         error_msg = resp.json().get('error_msg')
         if not resp or error_code != 0:
             raise Exception(error_msg)
+
+if __name__ == '__main__':
+    pass
