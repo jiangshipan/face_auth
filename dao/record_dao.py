@@ -19,8 +19,14 @@ class RecordDao(object):
     def get_record_by_user_id(user_id, page, query_filters):
         filters = [Record.user_id == user_id, Record.status == IS_OPEN.YES]
         pro_class = query_filters.get('pro_class')
+        create_time = query_filters.get('create_time')
+        end_time = query_filters.get('end_time')
         if pro_class:
             filters.append(Record.pro_class == pro_class)
+        if create_time:
+            filters.append(Record.create_time >= create_time)
+        if end_time:
+            filters.append(Record.end_time <= end_time)
         records = Record.query.filter(*filters).all()
         # total可维护到redis中
         total = len(records)

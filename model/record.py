@@ -10,6 +10,7 @@ class Record(db.Model):
     pro_class = db.Column(db.String(32), nullable=False, doc=u'专业班级')
     unchecked = db.Column(db.Text, nullable=False, default='', doc=u'未签到的人')
     create_time = db.Column(db.DateTime, nullable=False, default=func.now(), doc=u'创建时间')
+    end_time = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now(), doc=u'结束时间')
     record = db.Column(db.Text, nullable=False, default='', doc=u'签到记录')
     status = db.Column(db.Integer, nullable=False, default=1, doc=u'签到结束前是否可查, 0-可看,1-不可看')
 

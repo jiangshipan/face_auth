@@ -46,7 +46,7 @@ def get_real_record():
 
 
 def build_filters(params):
-    filter_fields = ['pro_class']
+    filter_fields = ['pro_class', 'create_time', 'end_time']
     filters = {}
     for item in filter_fields:
         if params.get(item):

@@ -28,7 +28,8 @@ class RecordService(object):
                 'belong': user.username,
                 'pro_class': record.pro_class,
                 'unchecked': unchecked.get('data'),
-                'create_time': record.create_time.strftime('%Y-%m-%d %H:%M:%S')
+                'create_time': record.create_time.strftime('%Y-%m-%d %H:%M:%S'),
+                'end_time': record.end_time.strftime('%Y-%m-%d %H:%M:%S')
             })
         res.update({
             'data': data,
@@ -46,7 +47,7 @@ class RecordService(object):
         """
         record = RecordDao.get_lastest_record_by_class(user_id, pro_class)
         if not record:
-            return []
+            raise Exception('您还未开启签到')
         record_content = json.loads(record.record)
         # 获取班级下未签到的人
         unchecked = []
