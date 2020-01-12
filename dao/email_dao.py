@@ -18,3 +18,7 @@ class EmailDao(object):
     @staticmethod
     def get_email(email):
         return Email.query.filter(Email.email == email).first()
+
+    @staticmethod
+    def get_email_by_user_id(user_id):
+        return Email.query.filter(Email.user_id == user_id).first()

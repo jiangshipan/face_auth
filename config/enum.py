@@ -32,3 +32,12 @@ class IS_OPEN(object):
     """
     YES = 0
     NO = 1
+
+
+class RecordType(object):
+    """
+    发送报文类型
+    """
+    DAY = 1
+    WEEK = 2
+    MONTH = 3

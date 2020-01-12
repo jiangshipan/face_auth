@@ -32,6 +32,12 @@ class FaceService(object):
         face_name = face_info.get('face_name')
         face_class = face_info.get('face_class')
         base64_code = face_info.get('base64_code')
+        # 录入前先校验该人脸是否已经录入
+        result = self.search_face_info(base64_code, user_id)
+        if result and result.get('user_list'):
+            for res in result.get('user_list'):
+                if res.get('score') > FACE_ACCESS:
+                    raise Exception("该人脸已经存在, 请勿重复录入")
         face = FaceDao.get_by_user_id_and_face_name(user_id, face_name)
         if face:
             raise Exception('face is exist')
@@ -64,15 +70,7 @@ class FaceService(object):
         try:
             user_id = face_info.get('user_id')
             base64_code = face_info.get('base64_code')
-            params = {'image': base64_code, 'image_type': 'BASE64', 'group_id_list': str(user_id),
-                      'quality_control': 'NORMAL',
-                      'liveness_control': 'NORMAL'}
-            access_token = RequestUtil.get_access_token()
-            url = FACE_SEARCH + "?access_token=" + str(access_token)
-            resp = RequestUtil.send_post(url=url, params=json.dumps(params),
-                                         headers={'content-type': 'application/json'})
-            self.check_response(resp)
-            result = resp.json().get('result')
+            result = self.search_face_info(base64_code, user_id)
             for res in result.get('user_list'):
                 if res.get('score') > FACE_ACCESS:
                     face_id = res.get('user_id')
@@ -218,6 +216,24 @@ class FaceService(object):
         error_msg = resp.json().get('error_msg')
         if not resp or error_code != 0:
             raise Exception(error_msg)
+
+    def search_face_info(self, base64_code, user_id):
+        """
+        发送人脸搜索请求
+        :param base64_code:
+        :param user_id:
+        :return:
+        """
+        params = {'image': base64_code, 'image_type': 'BASE64', 'group_id_list': str(user_id),
+                  'quality_control': 'NORMAL',
+                  'liveness_control': 'NORMAL'}
+        access_token = RequestUtil.get_access_token()
+        url = FACE_SEARCH + "?access_token=" + str(access_token)
+        resp = RequestUtil.send_post(url=url, params=json.dumps(params),
+                                     headers={'content-type': 'application/json'})
+        self.check_response(resp)
+        result = resp.json().get('result')
+        return result
 
 if __name__ == '__main__':
     pass

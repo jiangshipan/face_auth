@@ -54,3 +54,20 @@ class MailService(object):
         """
         with app.app_context():
             mail.send(msg)
+            print 'success'
+
+    def send_msg_to_all(self, title, msg, email):
+        """
+        发送msg给所有email
+        :return:
+        """
+        message = Message(subject=title, sender=config.MAIL_USERNAME, recipients=[email])
+        message.html = '<p>' + msg + '<p>'
+        self.async_send(message)
+
+if __name__ == '__main__':
+    # msg = Message(subject='test', sender=config.MAIL_USERNAME, recipients=['1320740751@qq.com'])
+    # with app.app_context():
+    #     mail.send(msg)
+    mail_service = MailService()
+    mail_service.send_msg_to_all('test', 'test', '1320740751@qq.com')
