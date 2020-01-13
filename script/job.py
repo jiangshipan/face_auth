@@ -34,7 +34,6 @@ def send_week_record():
     :return:
     """
     send_record(RecordType.WEEK)
-    print 'hhh'
 
 
 def send_month_record():
@@ -93,6 +92,7 @@ def send_record(type):
             msg.append('班级: %s, 未签到的人: %s, 签到时间范围: %s ~ %s <br>' % (record.pro_class, unchecked_people,
                                                                     create_time, end_time))
         mail_service.send_msg_to_all(title, ''.join(msg), email)
+    print '%s发送完成, 发送时间:%s' % (mark, datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 if __name__ == '__main__':
