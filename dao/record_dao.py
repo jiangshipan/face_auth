@@ -52,3 +52,12 @@ class RecordDao(object):
             filters.append(Record.end_time <= end_time)
         records = Record.query.filter(*filters).order_by(Record.create_time.desc()).all()
         return records
+
+    @staticmethod
+    def get_record_by_id(id):
+        """
+        根据id查询记录
+        :param id:
+        :return:
+        """
+        return Record.query.filter(Record.id == id).first()

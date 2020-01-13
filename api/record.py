@@ -12,6 +12,7 @@ record = Blueprint('record', __name__)
 
 record_service = RecordService()
 
+
 @limiter.limit("10 per second")
 @record.route("/get")
 def get_reocrd():
@@ -27,6 +28,7 @@ def get_reocrd():
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')
 
+
 @limiter.limit("10 per second")
 @record.route("/get_now")
 def get_real_record():
@@ -40,6 +42,23 @@ def get_real_record():
         if not pro_class:
             raise Exception('缺少班级参数')
         res = record_service.get_real_record_by_class(user_id, pro_class)
+    except Exception as e:
+        return ResponseUtil.error_response(data=[], msg=e.message)
+    return ResponseUtil.success_response(data=res, msg='success')
+
+
+@limiter.limit("10 per second")
+@record.route("/get_detail")
+def get_real_record_by_id():
+    """
+    根据id获取实时签到情况
+    :return:
+    """
+    try:
+        id = request.args.get('id')
+        if not id:
+            raise Exception('缺少相关参数')
+        res = record_service.get_real_record_by_id(id)
     except Exception as e:
         return ResponseUtil.error_response(data=[], msg=e.message)
     return ResponseUtil.success_response(data=res, msg='success')

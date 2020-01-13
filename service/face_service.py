@@ -114,7 +114,8 @@ class FaceService(object):
                 'belong': user.username,
                 'url': face.face_url,
                 'status': face.status,
-                'stu_class': face.face_class
+                'stu_class': face.face_class,
+                'open_check': face.open_check
             })
         res.update({
             'data': data,

@@ -59,3 +59,17 @@ class RecordService(object):
             'unchecked': unchecked
         }
         return res
+
+    def get_real_record_by_id(self, id):
+        """
+        获取某个实时签到记录
+        :param id:
+        :return:
+        """
+        record = RecordDao.get_record_by_id(id)
+        record_content = json.loads(record.record)
+        # 获取班级下未签到的人
+        res = {
+            'checked': record_content.get('data'),
+        }
+        return res
