@@ -98,8 +98,8 @@ def send_record(type):
 if __name__ == '__main__':
     from apscheduler.schedulers.blocking import BlockingScheduler
     scheduler = BlockingScheduler()
-    # 每天8点执行该方法
-    scheduler.add_job(send_day_record, CronTrigger.from_crontab('0 0 * * *'))
-    scheduler.add_job(send_week_record, CronTrigger.from_crontab('0 0 * * 1'))
-    scheduler.add_job(send_month_record, CronTrigger.from_crontab('0 0 1 1-12 *'))
+    # 每天6点执行该方法
+    scheduler.add_job(send_day_record, CronTrigger.from_crontab('0 6 * * *'))
+    scheduler.add_job(send_week_record, CronTrigger.from_crontab('0 6 * * 1'))
+    scheduler.add_job(send_month_record, CronTrigger.from_crontab('0 6 1 1-12 *'))
     scheduler.start()

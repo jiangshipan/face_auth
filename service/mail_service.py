@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dao.email_dao import EmailDao
 from util.face_auth_utils import FaceAuthUtils, Singleton
 
-executor = ThreadPoolExecutor(2)
+executor = ThreadPoolExecutor(5)
 
 
 class MailService(object):
